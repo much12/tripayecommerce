@@ -22,6 +22,7 @@ interface Product {
     sku: string;
     name: string;
     price: number;
+    images: string[] | null;
 }
 
 defineProps<{
@@ -50,7 +51,7 @@ function rupiah(value: number) {
     return 'Rp' + value.toLocaleString('id-ID');
 }
 
-// Inisial produk sebagai placeholder gambar (DB belum menyimpan gambar).
+// Inisial produk sebagai placeholder gambar
 function initials(name: string) {
     return name
         .split(' ')
@@ -271,8 +272,9 @@ function initials(name: string) {
                         :key="p.id"
                         class="group flex flex-col overflow-hidden rounded-xl border border-border bg-card transition-all hover:-translate-y-1 hover:shadow-lg"
                     >
-                        <div class="relative flex aspect-square items-center justify-center bg-gradient-to-br from-muted to-muted/40">
-                            <span class="text-4xl font-bold text-muted-foreground/50 transition-transform group-hover:scale-110">
+                        <Link :href="route('product.show', p.sku)" class="relative flex aspect-square items-center justify-center bg-gradient-to-br from-muted to-muted/40">
+                            <img v-if="p.images && p.images.length" :src="`/storage/${p.images[0]}`" :alt="p.name" class="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105" />
+                            <span v-else class="text-4xl font-bold text-muted-foreground/50 transition-transform group-hover:scale-110">
                                 {{ initials(p.name) }}
                             </span>
                             <button
@@ -281,9 +283,11 @@ function initials(name: string) {
                             >
                                 <Heart class="h-4 w-4" />
                             </button>
-                        </div>
+                        </Link>
                         <div class="flex flex-1 flex-col p-4">
-                            <h3 class="line-clamp-2 text-sm font-medium">{{ p.name }}</h3>
+                            <Link :href="route('product.show', p.sku)">
+                                <h3 class="line-clamp-2 text-sm font-medium hover:text-primary">{{ p.name }}</h3>
+                            </Link>
                             <div class="mt-1 font-mono text-xs text-muted-foreground">{{ p.sku }}</div>
                             <div class="mt-3 flex items-end gap-2">
                                 <span class="font-bold text-primary">{{ rupiah(p.price) }}</span>

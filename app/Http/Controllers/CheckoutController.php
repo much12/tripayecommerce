@@ -118,6 +118,20 @@ class CheckoutController extends Controller
             ->latest()
             ->first();
 
+        if ($invoice && $invoice->tripay_reference) {
+            $response = $this->tripay->detailTransaction($invoice->tripay_reference);
+            
+            if ($response->successful()) {
+                $body = $response->json();
+                if (isset($body['success']) && $body['success'] === true && isset($body['data']['status'])) {
+                    $apiStatus = $body['data']['status'];
+                    if ($invoice->status !== $apiStatus) {
+                        $invoice->update(['status' => $apiStatus]);
+                    }
+                }
+            }
+        }
+
         return Inertia::render('CheckoutFinish', [
             'invoice' => $invoice?->only('merchant_ref', 'tripay_reference', 'amount', 'status', 'buyer_email'),
         ]);

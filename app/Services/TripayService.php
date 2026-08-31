@@ -75,4 +75,15 @@ class TripayService
 
         return hash_equals($localSignature, $signatureHeader);
     }
+
+    /**
+     * Ambil detail transaksi dari TriPay berdasarkan reference
+     */
+    public function detailTransaction(string $reference): Response
+    {
+        return Http::withToken($this->apiKey)
+            ->get("{$this->baseUrl}/transaction/detail", [
+                'reference' => $reference,
+            ]);
+    }
 }

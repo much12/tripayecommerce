@@ -13,9 +13,15 @@ Route::get('/', function () {
     return Inertia::render('Landing', [
         'products' => Product::latest()
             ->take(8)
-            ->get(['id', 'sku', 'name', 'price']),
+            ->get(['id', 'sku', 'name', 'price', 'images']),
     ]);
 })->name('home');
+
+Route::get('/produk/{product:sku}', function (Product $product) {
+    return Inertia::render('ProductDetail', [
+        'product' => $product
+    ]);
+})->name('product.show');
 
 Route::get('dashboard', function () {
     return Inertia::render('Dashboard');
