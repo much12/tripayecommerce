@@ -89,3 +89,45 @@ html {
         @apply bg-background text-foreground;
     }
 }
+
+/* Dark Mode Overrides for CKEditor 5 */
+.dark {
+    --ck-color-base-background: hsl(var(--background));
+    --ck-color-base-text: hsl(var(--foreground));
+    --ck-color-base-border: hsl(var(--border));
+    --ck-color-button-default-background: transparent;
+    --ck-color-button-default-hover-background: hsl(var(--muted));
+    --ck-color-button-default-active-background: hsl(var(--muted));
+    --ck-color-button-on-background: hsl(var(--muted));
+    --ck-color-button-on-color: hsl(var(--foreground));
+    --ck-color-toolbar-background: hsl(var(--sidebar-background));
+    --ck-color-toolbar-border: hsl(var(--border));
+    --ck-color-dropdown-panel-background: hsl(var(--popover));
+    --ck-color-dropdown-panel-border: hsl(var(--border));
+    --ck-color-input-background: hsl(var(--background));
+    --ck-color-input-border: hsl(var(--input));
+    --ck-color-input-text: hsl(var(--foreground));
+    --ck-color-list-background: hsl(var(--popover));
+    --ck-color-list-button-hover-background: hsl(var(--muted));
+    --ck-color-list-button-on-background: hsl(var(--primary));
+    --ck-color-list-button-on-text: hsl(var(--primary-foreground));
+    --ck-color-panel-background: hsl(var(--popover));
+    --ck-color-panel-border: hsl(var(--border));
+}
+
+.dark .ck-editor__editable_inline {
+    background: hsl(var(--background)) !important;
+    color: hsl(var(--foreground)) !important;
+    border-color: hsl(var(--border)) !important;
+}
+
+.dark .dropzone {
+    background: hsl(var(--background)) !important;
+    border-color: hsl(var(--border)) !important;
+    color: hsl(var(--foreground)) !important;
+}
+
+.dark .dropzone .dz-preview .dz-details {
+    background: hsl(var(--card)) !important;
+    color: hsl(var(--card-foreground)) !important;
+}

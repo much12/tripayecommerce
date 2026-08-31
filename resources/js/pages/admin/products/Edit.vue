@@ -7,6 +7,17 @@ import AppLayout from '@/layouts/AppLayout.vue';
 import { type BreadcrumbItem } from '@/types';
 import { Head, Link, useForm } from '@inertiajs/vue3';
 import { ArrowLeft, LoaderCircle } from 'lucide-vue-next';
+import { onMounted, ref, onBeforeUnmount } from 'vue';
+
+// CKEditor
+import CKEditor from '@ckeditor/ckeditor5-vue';
+import ClassicEditor from '@ckeditor/ckeditor5-build-classic';
+
+// Dropzone
+import Dropzone from 'dropzone';
+import 'dropzone/dist/dropzone.css';
+
+const ckeditor = CKEditor.component;
 
 interface Product {
     id: number;
@@ -14,6 +25,8 @@ interface Product {
     name: string;
     price: number;
     reference: string | null;
+    description: string | null;
+    images: string[] | null;
 }
 
 const props = defineProps<{ product: Product }>();
@@ -25,14 +38,50 @@ const breadcrumbs: BreadcrumbItem[] = [
 ];
 
 const form = useForm({
+    _method: 'put',
     sku: props.product.sku,
     name: props.product.name,
     price: props.product.price as number | null,
     reference: props.product.reference ?? '',
+    description: props.product.description ?? '',
+    images: [] as File[],
+});
+
+const dropzoneRef = ref<HTMLElement | null>(null);
+let dzInstance: Dropzone | null = null;
+
+onMounted(() => {
+    if (dropzoneRef.value) {
+        dzInstance = new Dropzone(dropzoneRef.value, {
+            url: "/", // Dummy URL as we don't use Dropzone's built-in upload
+            autoProcessQueue: false,
+            addRemoveLinks: true,
+            acceptedFiles: "image/*",
+            dictDefaultMessage: "Tarik & lepas gambar ke sini atau klik untuk memilih",
+            dictRemoveFile: "Hapus",
+        });
+
+        dzInstance.on("addedfile", (file: any) => {
+            form.images.push(file);
+        });
+
+        dzInstance.on("removedfile", (file: any) => {
+            const index = form.images.findIndex((f) => f.name === file.name && f.size === file.size);
+            if (index > -1) {
+                form.images.splice(index, 1);
+            }
+        });
+    }
+});
+
+onBeforeUnmount(() => {
+    if (dzInstance) {
+        dzInstance.destroy();
+    }
 });
 
 const submit = () => {
-    form.transform((data) => ({ ...data, price: Number(data.price) })).put(`/admin/produk/${props.product.id}`);
+    form.transform((data) => ({ ...data, price: Number(data.price) })).post(`/admin/produk/${props.product.id}`);
 };
 </script>
 
@@ -73,6 +122,23 @@ const submit = () => {
                     </div>
 
                     <div class="grid gap-2">
+                        <Label for="description">Deskripsi Produk</Label>
+                        <div class="prose max-w-none">
+                            <ckeditor :editor="ClassicEditor" v-model="form.description" />
+                        </div>
+                        <InputError :message="form.errors.description" />
+                    </div>
+
+                    <div class="grid gap-2">
+                        <Label>Gambar Produk (Pilih baru untuk mengganti yang lama)</Label>
+                        <div ref="dropzoneRef" class="dropzone rounded-md border-2 border-dashed bg-background hover:bg-muted/50 cursor-pointer"></div>
+                        <div v-if="product.images && product.images.length && !form.images.length" class="flex gap-2 mt-2">
+                            <img v-for="(img, i) in product.images" :key="i" :src="`/storage/${img}`" class="w-20 h-20 object-cover rounded-md border" />
+                        </div>
+                        <InputError :message="form.errors.images" />
+                    </div>
+
+                    <div class="grid gap-2">
                         <Label for="reference">Merchant Reference (TriPay)</Label>
                         <Input id="reference" v-model="form.reference" placeholder="mis. REF-TRP-001 (opsional)" />
                         <p class="text-xs text-muted-foreground">Referensi merchant untuk integrasi pembayaran TriPay. Boleh dikosongkan.</p>
@@ -91,3 +157,38 @@ const submit = () => {
         </div>
     </AppLayout>
 </template>
+
+<style>
+/* Adjust dropzone internal styling for dark mode or overall fit */
+.dropzone {
+    min-height: 150px;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    padding: 1rem;
+}
+.dropzone .dz-message {
+    margin: 2em 0;
+}
+.dropzone .dz-preview .dz-remove {
+    cursor: pointer;
+    margin-top: 0.5rem;
+    display: inline-block;
+    padding: 0.25rem 0.5rem;
+    font-size: 0.875rem;
+    color: hsl(var(--destructive));
+    border: 1px solid hsl(var(--destructive));
+    border-radius: var(--radius);
+    background: transparent;
+    text-decoration: none;
+}
+.dropzone .dz-preview .dz-remove:hover {
+    background: hsl(var(--destructive));
+    color: hsl(var(--destructive-foreground));
+}
+/* CKEditor min-height */
+.ck-editor__editable {
+    min-height: 200px;
+}
+</style>

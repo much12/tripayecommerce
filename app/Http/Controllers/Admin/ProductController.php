@@ -49,6 +49,14 @@ class ProductController extends Controller
     {
         $data = $this->validateData($request);
 
+        if ($request->hasFile('images')) {
+            $imagePaths = [];
+            foreach ($request->file('images') as $image) {
+                $imagePaths[] = $image->store('products', 'public');
+            }
+            $data['images'] = $imagePaths;
+        }
+
         Product::create($data);
 
         return redirect()->route('admin.products.index')
@@ -72,6 +80,22 @@ class ProductController extends Controller
     {
         $data = $this->validateData($request, $product);
 
+        if ($request->hasFile('images')) {
+            $imagePaths = [];
+            foreach ($request->file('images') as $image) {
+                $imagePaths[] = $image->store('products', 'public');
+            }
+            // Delete old images if necessary
+            if ($product->images) {
+                foreach ($product->images as $oldImage) {
+                    \Illuminate\Support\Facades\Storage::disk('public')->delete($oldImage);
+                }
+            }
+            $data['images'] = $imagePaths;
+        } else {
+            unset($data['images']);
+        }
+
         $product->update($data);
 
         return redirect()->route('admin.products.index')
@@ -83,6 +107,11 @@ class ProductController extends Controller
      */
     public function destroy(Product $product): RedirectResponse
     {
+        if ($product->images) {
+            foreach ($product->images as $oldImage) {
+                \Illuminate\Support\Facades\Storage::disk('public')->delete($oldImage);
+            }
+        }
         $product->delete();
 
         return redirect()->route('admin.products.index')
@@ -106,11 +135,16 @@ class ProductController extends Controller
             'name' => ['required', 'string', 'max:255'],
             'price' => ['required', 'integer', 'min:0'],
             'reference' => ['nullable', 'string', 'max:255'],
+            'description' => ['nullable', 'string'],
+            'images' => ['nullable', 'array'],
+            'images.*' => ['image', 'max:2048'],
         ], [], [
             'sku' => 'SKU',
             'name' => 'nama produk',
             'price' => 'harga',
             'reference' => 'merchant reference',
+            'description' => 'deskripsi',
+            'images' => 'gambar',
         ]);
     }
 }

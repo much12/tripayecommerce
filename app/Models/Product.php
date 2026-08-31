@@ -20,6 +20,8 @@ class Product extends Model
         'name',
         'price',
         'reference',
+        'description',
+        'images',
     ];
 
     /**
@@ -31,6 +33,7 @@ class Product extends Model
     {
         return [
             'price' => 'integer',
+            'images' => 'array',
         ];
     }
 }
