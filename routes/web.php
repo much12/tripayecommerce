@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Admin\CustomerController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\InvoiceController;
 use App\Http\Controllers\Admin\ProductController;
@@ -57,7 +58,7 @@ Route::middleware(['auth', 'verified', 'admin'])
         Route::get('pesanan', [InvoiceController::class, 'index'])->name('orders');
         Route::get('pesanan/{invoice}', [InvoiceController::class, 'show'])->name('orders.show');
 
-        Route::get('pelanggan', fn () => Inertia::render('admin/Customers'))->name('customers');
+        Route::get('pelanggan', [CustomerController::class, 'index'])->name('customers');
     });
 
 require __DIR__.'/settings.php';
