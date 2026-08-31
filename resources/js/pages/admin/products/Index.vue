@@ -24,6 +24,7 @@ interface Product {
     price: number;
     reference: string | null;
     created_at: string;
+    category: { id: number; name: string } | null;
 }
 
 interface Paginated<T> {
@@ -112,6 +113,7 @@ function confirmDelete() {
                             <tr class="border-b border-sidebar-border/70 text-left text-muted-foreground dark:border-sidebar-border">
                                 <th class="px-5 py-3 font-medium">SKU</th>
                                 <th class="px-5 py-3 font-medium">Nama Produk</th>
+                                <th class="px-5 py-3 font-medium">Kategori</th>
                                 <th class="px-5 py-3 font-medium">Harga</th>
                                 <th class="px-5 py-3 font-medium">Reference</th>
                                 <th class="px-5 py-3 text-right font-medium">Aksi</th>
@@ -125,6 +127,12 @@ function confirmDelete() {
                             >
                                 <td class="px-5 py-3 font-mono text-xs">{{ p.sku }}</td>
                                 <td class="px-5 py-3 font-medium">{{ p.name }}</td>
+                                <td class="px-5 py-3">
+                                    <span v-if="p.category" class="rounded-full bg-primary/10 px-2.5 py-1 text-xs font-medium text-primary">
+                                        {{ p.category.name }}
+                                    </span>
+                                    <span v-else class="text-muted-foreground">—</span>
+                                </td>
                                 <td class="px-5 py-3">{{ rupiah(p.price) }}</td>
                                 <td class="px-5 py-3 text-muted-foreground">{{ p.reference ?? '—' }}</td>
                                 <td class="px-5 py-3">
@@ -149,7 +157,7 @@ function confirmDelete() {
 
                             <!-- Empty state -->
                             <tr v-if="products.data.length === 0">
-                                <td colspan="5">
+                                <td colspan="6">
                                     <div class="flex flex-col items-center justify-center gap-3 py-16 text-center">
                                         <span class="flex h-12 w-12 items-center justify-center rounded-2xl bg-primary/10 text-primary">
                                             <Package class="h-6 w-6" />

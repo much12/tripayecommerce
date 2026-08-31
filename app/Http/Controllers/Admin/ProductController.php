@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\Category;
 use App\Models\Product;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -20,6 +21,7 @@ class ProductController extends Controller
         $search = $request->string('search')->toString();
 
         $products = Product::query()
+            ->with('category:id,name')
             ->when($search, function ($query) use ($search) {
                 $query->where('name', 'like', "%{$search}%")
                     ->orWhere('sku', 'like', "%{$search}%");
@@ -39,7 +41,9 @@ class ProductController extends Controller
      */
     public function create(): Response
     {
-        return Inertia::render('admin/products/Create');
+        return Inertia::render('admin/products/Create', [
+            'categories' => Category::orderBy('name')->get(['id', 'name']),
+        ]);
     }
 
     /**
@@ -70,6 +74,7 @@ class ProductController extends Controller
     {
         return Inertia::render('admin/products/Edit', [
             'product' => $product,
+            'categories' => Category::orderBy('name')->get(['id', 'name']),
         ]);
     }
 
@@ -134,6 +139,7 @@ class ProductController extends Controller
             ],
             'name' => ['required', 'string', 'max:255'],
             'price' => ['required', 'integer', 'min:0'],
+            'category_id' => ['nullable', 'exists:categories,id'],
             'reference' => ['nullable', 'string', 'max:255'],
             'description' => ['nullable', 'string'],
             'images' => ['nullable', 'array'],
@@ -142,6 +148,7 @@ class ProductController extends Controller
             'sku' => 'SKU',
             'name' => 'nama produk',
             'price' => 'harga',
+            'category_id' => 'kategori',
             'reference' => 'merchant reference',
             'description' => 'deskripsi',
             'images' => 'gambar',

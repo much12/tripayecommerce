@@ -19,6 +19,15 @@ import 'dropzone/dist/dropzone.css';
 
 const ckeditor = CKEditor.component;
 
+interface Category {
+    id: number;
+    name: string;
+}
+
+defineProps<{
+    categories: Category[];
+}>();
+
 const breadcrumbs: BreadcrumbItem[] = [
     { title: 'Dashboard', href: '/admin' },
     { title: 'Produk', href: '/admin/produk' },
@@ -29,6 +38,7 @@ const form = useForm({
     sku: '',
     name: '',
     price: null as number | null,
+    category_id: null as number | null,
     reference: '',
     description: '',
     images: [] as File[],
@@ -106,6 +116,22 @@ const submit = () => {
                         <Label for="price">Harga (Rp) <span class="text-red-500">*</span></Label>
                         <Input id="price" type="number" min="0" v-model="form.price" placeholder="mis. 349000" />
                         <InputError :message="form.errors.price" />
+                    </div>
+
+                    <div class="grid gap-2">
+                        <Label for="category_id">Kategori</Label>
+                        <select
+                            id="category_id"
+                            v-model="form.category_id"
+                            class="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
+                        >
+                            <option :value="null">— Tanpa kategori —</option>
+                            <option v-for="c in categories" :key="c.id" :value="c.id">{{ c.name }}</option>
+                        </select>
+                        <p v-if="categories.length === 0" class="text-xs text-muted-foreground">
+                            Belum ada kategori. Tambahkan lewat menu <strong>Kategori</strong> terlebih dahulu.
+                        </p>
+                        <InputError :message="form.errors.category_id" />
                     </div>
 
                     <div class="grid gap-2">

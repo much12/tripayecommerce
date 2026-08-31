@@ -69,13 +69,6 @@ function initials(name: string) {
     </Head>
 
     <div class="min-h-screen bg-background text-foreground">
-        <!-- Topbar -->
-        <div class="bg-primary text-primary-foreground">
-            <div class="mx-auto flex max-w-7xl items-center justify-center px-4 py-2 text-center text-xs sm:text-sm">
-                🎉 Promo Akhir Bulan — Diskon hingga 50% + Gratis Ongkir se-Indonesia!
-            </div>
-        </div>
-
         <!-- Header -->
         <header class="sticky top-0 z-40 border-b border-border bg-background/80 backdrop-blur">
             <div class="mx-auto flex max-w-7xl items-center gap-4 px-4 py-4">
@@ -99,7 +92,6 @@ function initials(name: string) {
                 <nav class="ml-auto hidden items-center gap-6 text-sm font-medium md:flex">
                     <a href="#kategori" class="text-muted-foreground transition-colors hover:text-foreground">Kategori</a>
                     <a href="#produk" class="text-muted-foreground transition-colors hover:text-foreground">Produk</a>
-                    <a href="#promo" class="text-muted-foreground transition-colors hover:text-foreground">Promo</a>
                 </nav>
 
                 <div class="ml-auto flex items-center gap-1 md:ml-0">
@@ -147,7 +139,6 @@ function initials(name: string) {
                 <nav class="flex flex-col gap-1 text-sm font-medium">
                     <a href="#kategori" class="rounded-md px-2 py-2 hover:bg-accent" @click="mobileOpen = false">Kategori</a>
                     <a href="#produk" class="rounded-md px-2 py-2 hover:bg-accent" @click="mobileOpen = false">Produk</a>
-                    <a href="#promo" class="rounded-md px-2 py-2 hover:bg-accent" @click="mobileOpen = false">Promo</a>
                 </nav>
                 <div class="mt-4 flex gap-2">
                     <Link
@@ -315,27 +306,6 @@ function initials(name: string) {
             </div>
         </section>
 
-        <!-- Promo CTA -->
-        <section id="promo" class="mx-auto max-w-7xl px-4 py-16">
-            <div class="relative overflow-hidden rounded-3xl bg-primary px-6 py-14 text-center text-primary-foreground sm:px-12">
-                <div class="absolute -left-16 -top-16 h-56 w-56 rounded-full bg-primary-foreground/10 blur-2xl"></div>
-                <div class="absolute -bottom-16 -right-16 h-56 w-56 rounded-full bg-primary-foreground/10 blur-2xl"></div>
-                <div class="relative">
-                    <h2 class="text-3xl font-bold tracking-tight sm:text-4xl">Daftar & Dapatkan Diskon 20%</h2>
-                    <p class="mx-auto mt-3 max-w-lg text-primary-foreground/80">
-                        Bergabung dengan Tripay sekarang dan nikmati potongan harga untuk pesanan pertamamu.
-                    </p>
-                    <div class="mt-8 flex flex-wrap justify-center gap-3">
-                        <Link :href="route('register')">
-                            <Button size="lg" variant="secondary" class="gap-2">
-                                Daftar Sekarang <ArrowRight class="h-4 w-4" />
-                            </Button>
-                        </Link>
-                    </div>
-                </div>
-            </div>
-        </section>
-
         <!-- Footer -->
         <footer class="border-t border-border bg-muted/30">
             <div class="mx-auto max-w-7xl px-4 py-12">
@@ -354,7 +324,6 @@ function initials(name: string) {
                         <ul class="mt-3 space-y-2 text-sm text-muted-foreground">
                             <li><a href="#kategori" class="hover:text-foreground">Kategori</a></li>
                             <li><a href="#produk" class="hover:text-foreground">Produk Unggulan</a></li>
-                            <li><a href="#promo" class="hover:text-foreground">Promo</a></li>
                         </ul>
                     </div>
                     <div>

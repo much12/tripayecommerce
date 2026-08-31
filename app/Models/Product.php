@@ -22,6 +22,7 @@ class Product extends Model
         'reference',
         'description',
         'images',
+        'category_id',
     ];
 
     /**
@@ -35,5 +36,10 @@ class Product extends Model
             'price' => 'integer',
             'images' => 'array',
         ];
+    }
+
+    public function category()
+    {
+        return $this->belongsTo(Category::class);
     }
 }
