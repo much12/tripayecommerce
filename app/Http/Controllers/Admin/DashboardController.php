@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\Invoice;
 use App\Models\Product;
 use App\Models\User;
 use Inertia\Inertia;
@@ -15,20 +16,31 @@ class DashboardController extends Controller
      */
     public function index(): Response
     {
+        $recentInvoices = Invoice::latest()->take(5)->get()->map(function ($invoice) {
+            $status = match ($invoice->status) {
+                'PAID' => 'Selesai',
+                'UNPAID' => 'Diproses',
+                'EXPIRED', 'FAILED', 'REFUND' => 'Dibatalkan',
+                default => 'Diproses',
+            };
+
+            return [
+                'id' => $invoice->merchant_ref,
+                'customer' => $invoice->buyer_email ?? 'Guest',
+                'total' => $invoice->amount,
+                'status' => $status,
+                'date' => $invoice->created_at->format('d M Y'),
+            ];
+        });
+
         return Inertia::render('admin/Dashboard', [
             'stats' => [
-                'revenue' => 48750000,
-                'orders' => 342,
+                'revenue' => (int) Invoice::where('status', 'PAID')->sum('amount'),
+                'orders' => Invoice::count(),
                 'products' => Product::count(),
                 'customers' => User::where('role', 'user')->count(),
             ],
-            'recentOrders' => [
-                ['id' => 'INV-1042', 'customer' => 'Andi Saputra', 'total' => 349000, 'status' => 'Selesai', 'date' => '31 Agu 2026'],
-                ['id' => 'INV-1041', 'customer' => 'Siti Rahma', 'total' => 189000, 'status' => 'Dikirim', 'date' => '31 Agu 2026'],
-                ['id' => 'INV-1040', 'customer' => 'Budi Hartono', 'total' => 504000, 'status' => 'Diproses', 'date' => '30 Agu 2026'],
-                ['id' => 'INV-1039', 'customer' => 'Dewi Lestari', 'total' => 229000, 'status' => 'Selesai', 'date' => '30 Agu 2026'],
-                ['id' => 'INV-1038', 'customer' => 'Rian Pratama', 'total' => 89000, 'status' => 'Dibatalkan', 'date' => '29 Agu 2026'],
-            ],
+            'recentOrders' => $recentInvoices,
         ]);
     }
 }
