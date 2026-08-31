@@ -1,20 +1,25 @@
 <script setup lang="ts">
 import { SidebarGroup, SidebarGroupLabel, SidebarMenu, SidebarMenuButton, SidebarMenuItem } from '@/components/ui/sidebar';
-import { type SharedData } from '@/types';
+import { type NavItem, type SharedData } from '@/types';
 import { Link, usePage } from '@inertiajs/vue3';
-import type { Component } from 'vue';
-
-interface NavItem {
-    title: string;
-    url: string;
-    icon: Component;
-}
 
 defineProps<{
     items: NavItem[];
 }>();
 
 const page = usePage<SharedData>();
+
+function isActive(href: string): boolean {
+    const current = page.url;
+
+    // Halaman utama admin harus cocok persis agar tidak selalu aktif.
+    if (href === '/admin') {
+        return current === '/admin';
+    }
+
+    // Menu lain tetap aktif saat berada di sub-halamannya (mis. produk/create).
+    return current === href || current.startsWith(href + '/');
+}
 </script>
 
 <template>
@@ -22,8 +27,8 @@ const page = usePage<SharedData>();
         <SidebarGroupLabel>Platform</SidebarGroupLabel>
         <SidebarMenu>
             <SidebarMenuItem v-for="item in items" :key="item.title">
-                <SidebarMenuButton as-child :is-active="item.url === page.url">
-                    <Link :href="item.url">
+                <SidebarMenuButton as-child :is-active="isActive(item.href)" :tooltip="item.title">
+                    <Link :href="item.href">
                         <component :is="item.icon" />
                         <span>{{ item.title }}</span>
                     </Link>

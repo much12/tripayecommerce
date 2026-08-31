@@ -5,27 +5,37 @@ import NavUser from '@/components/NavUser.vue';
 import { Sidebar, SidebarContent, SidebarFooter, SidebarHeader, SidebarMenu, SidebarMenuButton, SidebarMenuItem } from '@/components/ui/sidebar';
 import { type NavItem } from '@/types';
 import { Link } from '@inertiajs/vue3';
-import { BookOpen, Folder, LayoutGrid } from 'lucide-vue-next';
+import { LayoutGrid, Package, ShoppingBag, ShoppingCart, Users } from 'lucide-vue-next';
 import AppLogo from './AppLogo.vue';
 
 const mainNavItems: NavItem[] = [
     {
         title: 'Dashboard',
-        href: '/dashboard',
+        href: '/admin',
         icon: LayoutGrid,
+    },
+    {
+        title: 'Produk',
+        href: '/admin/produk',
+        icon: Package,
+    },
+    {
+        title: 'Pesanan',
+        href: '/admin/pesanan',
+        icon: ShoppingCart,
+    },
+    {
+        title: 'Pelanggan',
+        href: '/admin/pelanggan',
+        icon: Users,
     },
 ];
 
 const footerNavItems: NavItem[] = [
     {
-        title: 'Github Repo',
-        href: 'https://github.com/laravel/vue-starter-kit',
-        icon: Folder,
-    },
-    {
-        title: 'Documentation',
-        href: 'https://laravel.com/docs/starter-kits',
-        icon: BookOpen,
+        title: 'Lihat Toko',
+        href: '/',
+        icon: ShoppingBag,
     },
 ];
 </script>
@@ -36,7 +46,7 @@ const footerNavItems: NavItem[] = [
             <SidebarMenu>
                 <SidebarMenuItem>
                     <SidebarMenuButton size="lg" as-child>
-                        <Link :href="route('dashboard')">
+                        <Link :href="route('admin.dashboard')">
                             <AppLogo />
                         </Link>
                     </SidebarMenuButton>

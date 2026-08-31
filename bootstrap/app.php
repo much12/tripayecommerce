@@ -17,6 +17,15 @@ return Application::configure(basePath: dirname(__DIR__))
             HandleInertiaRequests::class,
             AddLinkHeadersForPreloadedAssets::class,
         ]);
+
+        $middleware->alias([
+            'admin' => \App\Http\Middleware\EnsureUserIsAdmin::class,
+        ]);
+
+        // Callback TriPay dikirim server-ke-server, tanpa token CSRF.
+        $middleware->validateCsrfTokens(except: [
+            'tripay/callback',
+        ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {
         //
